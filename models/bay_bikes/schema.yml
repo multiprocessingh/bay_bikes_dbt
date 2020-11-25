@@ -1,0 +1,91 @@
+
+version: 2
+
+models:
+    - name: station_d
+      description: "A station dimension table"
+      columns:
+          - name: id
+            description: "The primary key for this table"
+            tests:
+                - unique
+                - not_null
+          - name: station_name
+            description: "The name of the bay bikes station"
+            tests:
+              - not_null
+          - name: station_latitude
+            description: "The latitude of the station"
+            tests:
+              - not_null
+          - name: station_longitude
+            description: "The longitude of the station"
+            tests:
+              - not_null
+
+    - name: user_types_d
+      description: "A user type dimension table"
+      columns:
+          - name: id
+            description: "The primary key for this table"
+            tests:
+                - unique
+                - not_null
+          - name: user_type
+            description: "The category this user belongs to."
+            tests:
+              - unique
+              - not_null
+              - accepted_values:
+                  values: ["Subscriber", "Customer2"]
+
+    - name: trips_f
+      description: "A trips fact table"
+      columns:
+        - name: id
+          description: "The primary key for this table, it's the trip id"
+          tests:
+            - unique
+            - not_null
+        - name: start_time
+          description: "The utc timestamp the trip started"
+          tests:
+            - not_null
+        - name: end_time
+          description: "The utc timestamp the trip ended"
+          tests:
+            - not_null
+        - name: duration_sec
+          description: "The total time of the trip"
+          tests:
+            - not_null
+        - name: start_station_id
+          description: "The station id the bike was checked out"
+          tests:
+            - not_null
+            - relationships:
+                to: ref('station_d')
+                field: id
+        - name: end_station_id
+          description: "The station id the bike was checked in"
+          tests:
+            - not_null
+            - relationships:
+                to: ref('station_d')
+                field: id
+        - name: bike_id
+          description: "The bike id"
+          tests:
+            - not_null
+        - name: user_type_id
+          description: "The user type id"
+          tests:
+            - not_null
+            - relationships:
+                to: ref('user_types_d')
+                field: id
+
+sources:
+  - name: public
+    tables:
+      - name: trips_staging

@@ -1,0 +1,11 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:10.4
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=bay_bikes
+    volumes:
+      - /var/lib/postgres
+    ports:
+      - 5432:5432
